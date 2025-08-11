@@ -6,6 +6,7 @@
 
 // Imports the domain service.
 import { ConcurrencyFetcher } from '../../domain/services/ConcurrencyFetcher.js';
+import { InputValidator } from '../../domain/validators/InputValidator.js';
 
 export class FetchUrlsUseCase {
     /**
@@ -23,13 +24,9 @@ export class FetchUrlsUseCase {
      * @returns {Promise<any[]>} The fetched responses.
      */
     async execute(urls, maxConcurrency) {
-        // Validates input data before calling the domain logic.
-        if (!Array.isArray(urls) || urls.length === 0) {
-            throw new Error('The URL list cannot be empty.');
-        }
-        if (typeof maxConcurrency !== 'number' || maxConcurrency < 1) {
-            throw new Error('Concurrency limit must be a number greater than 0.');
-        }
+        // Validate inputs using the general Validator class.
+        InputValidator.validateNonEmptyArray(urls, 'The URL list cannot be empty.');
+        InputValidator.validateGreaterThanZero(maxConcurrency, 'Concurrency limit must be a number greater than 0.');
 
         // Calls the domain service to perform the task.
         return await this.concurrencyFetcher.fetchUrls(urls, maxConcurrency);

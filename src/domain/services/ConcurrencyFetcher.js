@@ -21,14 +21,18 @@ export class ConcurrencyFetcher {
             if (pendingItems.length === 0) {
                 return;
             }
+
             const { url, index: originalIndex } = pendingItems.shift();
 
             try {
                 const response = await fetch(url);
+
                 if (!response.ok) {
                     throw new Error(`HTTP Error: ${response.status} at ${url}`);
                 }
+
                 const data = await response.json();
+
                 responses[originalIndex] = { status: 'fulfilled', value: data, url: url };
             } catch (error) {
                 responses[originalIndex] = { status: 'rejected', reason: error, url: url };
@@ -40,6 +44,7 @@ export class ConcurrencyFetcher {
         };
 
         const initialPromises = [];
+        
         for (let i = 0; i < Math.min(urls.length, maxConcurrency); i++) {
             initialPromises.push(taskRunner());
         }
