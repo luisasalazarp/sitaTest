@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITA Senior Js Technical Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full">
+        <h1 class="text-4xl font-bold text-center mb-6 text-gray-800">
+            Technical Test (DDD)
+        </h1>
+    <p id="instructionText" class="text-center text-gray-600 mb-8 instruction-hidden"></p>
+        
+        <div class="mb-6 flex gap-4 justify-center">
+            <button id="fetcherButton" class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 shadow-md custom-hover-blue">Exercise 1: Concurrency Url Fetcher</button>
+            <button id="licenseButton" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 shadow-md custom-hover-green">Exercise 2: The License Plate</button>
+        </div>
+
+    <div id="fetcherFields" style="display:none;">
+            <div class="mb-4">
+                <label for="urlsInput" class="block text-gray-700 font-semibold mb-2">
+                    URLs (comma separated)
+                </label>
+                <input 
+                    type="text" 
+                    id="urlsInput" 
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" 
+                    placeholder="E.g.: https://example.com/1, https://example.com/2"
+                    value="https://jsonplaceholder.typicode.com/todos/1,https://jsonplaceholder.typicode.com/todos/2,https://jsonplaceholder.typicode.com/todos/3,https://jsonplaceholder.typicode.com/todos/4,https://jsonplaceholder.typicode.com/todos/5,https://jsonplaceholder.typicode.com/todos/6,https://jsonplaceholder.typicode.com/todos/7"
+                >
+            </div>
+
+            <div class="mb-6">
+                <label for="concurrencyInput" class="block text-gray-700 font-semibold mb-2">
+                    Concurrency Limit
+                </label>
+                <input 
+                    type="number" 
+                    id="concurrencyInput" 
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" 
+                    placeholder="E.g.: 3"
+                    value="3"
+                    min="1"
+                >
+            </div>
+
+            <button 
+                id="fetchButton" 
+                class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+                Start Requests
+            </button>
+        </div>
+
+    <div id="licenseFields" style="display:none;">
+            <div class="mb-4">
+                <label for="plateIndexInput" class="block text-gray-700 font-semibold mb-2">
+                    License Plate Index (n)
+                </label>
+                <input 
+                    type="number" 
+                    id="plateIndexInput" 
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow" 
+                    placeholder="E.g.: 0"
+                    value="0"
+                    min="0"
+                >
+            </div>
+            <button 
+                id="plateButton" 
+                class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+                Get License Plate
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="mt-8" style="display:none;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Results</h2>
+            <div id="results" class="bg-gray-50 p-6 rounded-lg overflow-x-auto text-sm text-gray-700 font-mono whitespace-pre-wrap">
+                <!-- Results will be displayed here -->
+                <p class="text-gray-500">Click the button to start the requests.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Script -->
+    <script type="module" src="dist/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+.custom-hover-blue:hover { background-color: #2563eb !important; }
+.custom-hover-green:hover { background-color: #16a34a !important; }
+
+/* Fade instruction text */
+#instructionText { transition: opacity .3s ease; }
+.instruction-hidden { opacity: 0; }
+.instruction-visible { opacity: 1; }
