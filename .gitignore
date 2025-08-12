@@ -12,7 +12,7 @@ node_modules/
 bower_components/
 
 # Output directories
-dist/
+# dist/
 build/
 out/
 
