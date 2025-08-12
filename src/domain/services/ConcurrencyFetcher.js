@@ -5,7 +5,6 @@
  */
 
 export class ConcurrencyFetcher {
-
     /**
      * Fetches a list of URLs with a maximum number of concurrent requests.
      * @param {string[]} urls - Array of URLs to fetch.
@@ -14,43 +13,35 @@ export class ConcurrencyFetcher {
      */
     async fetchUrls(urls, maxConcurrency) {
         const responses = new Array(urls.length);
-        // Wrap each url with its original index to support duplicates and O(1) placement
-        const pendingItems = urls.map((url, index) => ({ url, index }));
+        let nextIndex = 0;
 
-        const taskRunner = async () => {
-            if (pendingItems.length === 0) {
-                return;
-            }
-
-            const { url, index: originalIndex } = pendingItems.shift();
-
-            try {
-                const response = await fetch(url);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status} at ${url}`);
-                }
-
-                const data = await response.json();
-
-                responses[originalIndex] = { status: 'fulfilled', value: data, url: url };
-            } catch (error) {
-                responses[originalIndex] = { status: 'rejected', reason: error, url: url };
-            } finally {
-                if (pendingItems.length > 0) {
-                    taskRunner();
+        // Function that processes the next available URL
+        const worker = async () => {
+            while (true) {
+                const current = nextIndex++;
+                if (current >= urls.length) break;
+                const url = urls[current];
+                
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP Error: status ${response.status}`);
+                    }
+                    const data = await response.json();
+                    responses[current] = { status: 'fulfilled', value: data, url };
+                } catch (error) {
+                    responses[current] = { status: 'rejected', reason: error, url };
                 }
             }
         };
 
-        const initialPromises = [];
-        
-        for (let i = 0; i < Math.min(urls.length, maxConcurrency); i++) {
-            initialPromises.push(taskRunner());
+        // Launch up to maxConcurrency workers
+        const workers = [];
+        for (let i = 0; i < Math.min(maxConcurrency, urls.length); i++) {
+            workers.push(worker());
         }
 
-        await Promise.all(initialPromises);
-
+        await Promise.all(workers);
         return responses;
     }
 }

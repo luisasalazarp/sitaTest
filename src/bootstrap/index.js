@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
       { btn: licenseButton, active: 'bg-green-500 custom-hover-green ring ring-green-400', base: 'bg-gray-400' }
     ];
     mapping.forEach(({ btn, active, base }) => {
-      btn.classList.remove('bg-blue-500','bg-green-500','bg-gray-400','ring','ring-blue-400','ring-green-400');
-      btn.classList.remove('hover:bg-blue-700','hover:bg-green-700');
-      btn.classList.remove('custom-hover-blue','custom-hover-green');
+      btn.classList.remove('bg-blue-500', 'bg-green-500', 'bg-gray-400', 'ring', 'ring-blue-400', 'ring-green-400');
+      btn.classList.remove('hover:bg-blue-700', 'hover:bg-green-700');
+      btn.classList.remove('custom-hover-blue', 'custom-hover-green');
       if (btn === selected) {
         active.split(' ').forEach(c => btn.classList.add(c));
       } else {
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetcherFields.style.display = '';
     licenseFields.style.display = 'none';
     resultsContainer.style.display = '';
-  setInstruction('Enter a list of URLs and a concurrency limit.');
+    setInstruction('Enter a list of URLs and a concurrency limit.');
     resetButtons(fetcherButton);
     clearResults();
     if (!fetcherView) {
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetcherFields.style.display = 'none';
     licenseFields.style.display = '';
     resultsContainer.style.display = '';
-  setInstruction('Enter an index plate, starting by 0');
+    setInstruction('Enter an index plate, starting by 0');
     resetButtons(licenseButton);
     clearResults();
     if (!licenseView) {

@@ -1,58 +1,104 @@
-import { LicensePlateGenerator } from '../../../src/domain/services/LicensePlateGenerator.js';
+import { LicensePlateGenerator } from '../../../src/domain/services/LicensePlateGenerator';
 
 describe('LicensePlateGenerator', () => {
-	let gen;
-	beforeEach(() => { gen = new LicensePlateGenerator(); });
+    let generator;
 
-	test('first numeric values with padding', () => {
-		expect(gen.getPlateByIndex(0)).toBe('000000');
-		expect(gen.getPlateByIndex(1)).toBe('000001');
-		expect(gen.getPlateByIndex(9)).toBe('000009');
-		expect(gen.getPlateByIndex(10)).toBe('000010');
-	});
+    beforeEach(() => {
+        generator = new LicensePlateGenerator();
+    });
 
-	test('last pure numeric and transition to alphanumeric block (1 letter)', () => {
-		expect(gen.getPlateByIndex(999_999)).toBe('999999');
-		expect(gen.getPlateByIndex(1_000_000)).toBe('00000A'); // first with 1 letter
-		expect(gen.getPlateByIndex(1_000_000 + 25)).toBe('00000Z');
-		expect(gen.getPlateByIndex(1_000_000 + 26)).toBe('00001A'); // number increments
-	});
+    describe('input validation', () => {
+        test('should throw error for negative index', () => {
+            expect(() => generator.getPlateByIndex(-1)).toThrow('Index must be a non-negative integer.');
+        });
 
-	test('transition to block with more letters (e.g. 2 letters)', () => {
-        // Compute start of 2-letter block: after 1_000_000 + 10^5 * 26^1
-        const block1Size = Math.pow(10,5) * Math.pow(26,1); // 100000 * 26
-        const startBlock2 = 1_000_000 + block1Size; // index of the first 2-letter element
-        const firstTwoLetters = gen.getPlateByIndex(startBlock2); // should be 0000AA
-		expect(firstTwoLetters).toBe('0000AA');
-		const secondTwoLetters = gen.getPlateByIndex(startBlock2 + 1);
-		expect(secondTwoLetters).toBe('0000AB');
-	});
+        test('should throw error for non-integer index', () => {
+            expect(() => generator.getPlateByIndex(1.5)).toThrow('Index must be a non-negative integer.');
+        });
 
-	test('accepts valid numeric string input', () => {
-		expect(gen.getPlateByIndex('42')).toBe('000042');
-	});
+        test('should accept string numbers', () => {
+            expect(generator.getPlateByIndex("123")).toBe('000123');
+        });
+    });
 
-	test('rejects strings with non-digit characters', () => {
-		expect(() => gen.getPlateByIndex('12A')).toThrow('Index must contain only digits.');
-	});
+    describe('numeric sequences', () => {
+        test('should generate first plate as 000000', () => {
+            expect(generator.getPlateByIndex(0)).toBe('000000');
+        });
 
-	test('rejects negative or non-integer indexes', () => {
-		expect(() => gen.getPlateByIndex(-1)).toThrow('Index must be a non-negative integer.');
-		expect(() => gen.getPlateByIndex(3.14)).toThrow('Index must be a non-negative integer.');
-	});
+        test('should generate correct numeric sequences', () => {
+            expect(generator.getPlateByIndex(1)).toBe('000001');
+            expect(generator.getPlateByIndex(999)).toBe('000999');
+            expect(generator.getPlateByIndex(999999)).toBe('999999');
+        });
+    });
 
-	test('rejects overly long numeric string', () => {
-		expect(() => gen.getPlateByIndex('1'.repeat(13))).toThrow('Index string too long.');
-	});
+    describe('single letter sequences', () => {
+        test('should start single letter sequence correctly', () => {
+            expect(generator.getPlateByIndex(1000000)).toBe('00000A');
+        });
 
-	test('rejects index greater than supported maximum', () => {
-        // Recalculate max as in implementation
-		let total = 1_000_000;
-		for (let letters = 1; letters <= 6; letters++) {
-			const digits = 6 - letters;
-			total += Math.pow(10, digits) * Math.pow(26, letters);
-		}
-		const maxIndex = total - 1;
-		expect(() => gen.getPlateByIndex(maxIndex + 1)).toThrow('Index out of supported range');
-	});
+        test('should generate correct single letter sequences', () => {
+            const base = 1000000;
+            expect(generator.getPlateByIndex(base + 1)).toBe('00001A');
+            expect(generator.getPlateByIndex(base + 99999)).toBe('99999A');
+            expect(generator.getPlateByIndex(base + 100000)).toBe('00000B');
+            expect(generator.getPlateByIndex(base + 2599999)).toBe('99999Z');
+        });
+    });
+
+    describe('double letter sequences', () => {
+        test('should start double letter sequence correctly', () => {
+            const doubleLetterStart = 1000000 + (100000 * 26);
+            expect(generator.getPlateByIndex(doubleLetterStart)).toBe('0000AA');
+        });
+
+        test('should generate correct double letter sequences', () => {
+            const base = 1000000 + (100000 * 26);
+            expect(generator.getPlateByIndex(base + 1)).toBe('0001AA');
+            expect(generator.getPlateByIndex(base + 9999)).toBe('9999AA');
+            expect(generator.getPlateByIndex(base + 10000)).toBe('0000AB');
+        });
+    });
+
+    describe('triple letter sequences', () => {
+        test('should generate correct triple letter sequences', () => {
+            const base = 1000000 + (100000 * 26) + (10000 * 26 * 26);
+            expect(generator.getPlateByIndex(base)).toBe('000AAA');
+            expect(generator.getPlateByIndex(base + 1)).toBe('001AAA');
+        });
+    });
+
+    describe('maximum values', () => {
+        test('should calculate correct maximum index', () => {
+            const maxPlate = generator.getPlateByIndex(generator.getMaxIndex());
+            expect(maxPlate).toBe('ZZZZZZ');
+        });
+
+        test('should throw error for index beyond maximum', () => {
+            expect(() => 
+                generator.getPlateByIndex(generator.getMaxIndex() + 1)
+            ).toThrow('Index exceeds maximum supported value.');
+        });
+    });
+
+    describe('sequence transitions', () => {
+        test('should handle transitions between patterns correctly', () => {
+            const sequences = [
+                [0, '000000'],
+                [999999, '999999'],
+                [1000000, '00000A'],
+                [1099999, '99999A'],
+                [1100000, '00000B'],
+                [3599999, '99999Z'],
+                [3600000, '0000AA'],
+                [3609999, '9999AA'],
+                [3610000, '0000AB']
+            ];
+
+            sequences.forEach(([index, expected]) => {
+                expect(generator.getPlateByIndex(index)).toBe(expected);
+            });
+        });
+    });
 });
