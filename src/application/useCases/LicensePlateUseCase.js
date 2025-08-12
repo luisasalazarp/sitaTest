@@ -22,11 +22,22 @@ export class LicensePlateUseCase {
      * @returns {string}
      */
     execute(index) {
+        // Validate inputs using the general Validator class.
+        this.validateInputs(index);
+        
+        return this.generator.getPlateByIndex(index);
+    }
+
+    /**
+     * Validates the input parameters.
+     * @param {number} index - The index to validate.
+     */
+    validateInputs(index) {
         InputValidator.validateZeroOrMore(index, 'Index must be a non-negative integer.');
         const max = this.generator.getMaxIndex();
         if (index > max) {
             throw new Error(`Index out of supported range. Max allowed: ${max}.`);
         }
-        return this.generator.getPlateByIndex(index);
+        // Additional validation can be added here if needed.
     }
 }

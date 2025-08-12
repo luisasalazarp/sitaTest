@@ -25,10 +25,20 @@ export class FetchUrlsUseCase {
      */
     async execute(urls, maxConcurrency) {
         // Validate inputs using the general Validator class.
-        InputValidator.validateNonEmptyArray(urls, 'The URL list cannot be empty.');
-        InputValidator.validateGreaterThanZero(maxConcurrency, 'Concurrency limit must be a number greater than 0.');
+        this.validateInputs(urls, maxConcurrency);
 
         // Calls the domain service to perform the task.
         return await this.concurrencyFetcher.fetchUrls(urls, maxConcurrency);
+    }
+
+    /**
+     * Validates the input parameters.
+     * @param {string[]} urls - The array of URLs to validate.
+     * @param {number} maxConcurrency - The maximum number of concurrent requests.
+     */
+    validateInputs(urls, maxConcurrency) {
+        InputValidator.validateNonEmptyArray(urls, 'The URL list cannot be empty.');
+        InputValidator.validateGreaterThanZero(maxConcurrency, 'Concurrency limit must be a number greater than 0.');
+        // Additional validation can be added here if needed.
     }
 }
