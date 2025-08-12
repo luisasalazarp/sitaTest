@@ -45,6 +45,14 @@ src/
   - `FetcherView`: URL fetcher interface
   - `LicensePlateView`: License plate generator interface
 
+
+## Testing with GithubPages
+
+You can interact with the exercises without compiling the code if you access my GithubPages page directly.
+
+Visit: [https://luisasalazarp.github.io/sitaTest/](https://luisasalazarp.github.io/sitaTest/)
+
+
 ## Getting Started
 
 ### Prerequisites
